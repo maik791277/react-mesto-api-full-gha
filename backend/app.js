@@ -17,7 +17,7 @@ const {
   HTTP_STATUS_NOT_FOUND,
 } = http2.constants;
 
-const { PORT = 3000 } = process.env;
+const { PORT = 4000 } = process.env;
 const app = express();
 
 app.use(express.static(path.join(__dirname, 'public')));
