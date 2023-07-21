@@ -5,19 +5,22 @@ const { errors } = require('celebrate');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const path = require('path');
 const { createUser, login } = require('./controllers/users');
 const { errorMiddleware } = require('./middlewares/error');
 const routes = require('./routes');
 const { ClientError } = require('./class/ClientError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const path = require('path');
-
+require('dotenv').config();
 
 const {
   HTTP_STATUS_NOT_FOUND,
 } = http2.constants;
 
-const { PORT = 4000 } = process.env;
+const {
+  PORT = 3000,
+  MONGO_URL = 'mongodb://127.0.0.1:27017',
+} = process.env;
 const app = express();
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -27,7 +30,7 @@ app.use(cors());
 app.use(express.json());
 app.use(requestLogger);
 
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb', { useUnifiedTopology: true });
+mongoose.connect(`${MONGO_URL}/mestodb`, { useUnifiedTopology: true });
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({

@@ -1,4 +1,5 @@
-export const BASE_URL = 'http://v-porulitsun.nomoredomains.xyz'
+const BASE_URL = process.env.REACT_APP_API_URL;
+
 
 
 function checkResponse(res) {
