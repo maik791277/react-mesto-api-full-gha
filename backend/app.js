@@ -23,7 +23,7 @@ const {
 } = process.env;
 const app = express();
 
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors());
 
@@ -49,7 +49,7 @@ app.post('/api/signup', celebrate({
   }),
 }), createUser);
 
-app.get('api/error', (req, res, next) => {
+app.get('/api/error', (req, res, next) => {
   const error = new Error('Произошла ошибка');
   next(error);
 });
