@@ -32,14 +32,14 @@ app.use(requestLogger);
 
 mongoose.connect(`${MONGO_URL}/mestodb`, { useUnifiedTopology: true });
 
-app.post('/api/signin', celebrate({
+app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
 }), login);
 
-app.post('/api/signup', celebrate({
+app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).optional(),
     about: Joi.string().min(2).max(30).optional(),
@@ -49,13 +49,13 @@ app.post('/api/signup', celebrate({
   }),
 }), createUser);
 
-app.get('/api/error', (req, res, next) => {
+app.get('/error', (req, res, next) => {
   const error = new Error('Произошла ошибка');
   next(error);
 });
 
 app.use(cookieParser());
-app.use('/api/', routes);
+app.use('/', routes);
 app.use(errorLogger);
 app.use(errors());
 app.use((req, res, next) => next(new ClientError('Страница не найдена', HTTP_STATUS_NOT_FOUND)));
