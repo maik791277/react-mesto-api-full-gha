@@ -57,8 +57,9 @@ function App() {
 
    function authorize(email, password) {
       mestoAuth.authorize(email, password)
-      .then(response => response.text())
-      .then((data) => {
+      .then((data) => { 
+            handleLogin(); 
+            navigate('/main') 
             tokenCheck()
       })
       .catch((err) => {
@@ -194,9 +195,9 @@ function App() {
       setIsImagePopupOpen(true);
    }
 
-   // function handleLogin() {
-   //    setLoggedIn(true)
-   // }
+   function handleLogin() {
+       setLoggedIn(true)
+   }
 
    function closeAllPopups() {
       setIsEditAvatarPopupOpen(false);

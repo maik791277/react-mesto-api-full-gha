@@ -1,7 +1,6 @@
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 
-
 function checkResponse(res) {
    return res.ok ? res.json() : Promise.reject(`Ошибка ${res.status}`)
 }
@@ -15,7 +14,8 @@ export const register = (email, password) => {
       body: JSON.stringify({
          "password": password,
          "email": email
-      })
+      }),
+      credentials: 'include',
    })
    .then(res => checkResponse(res));
 };
@@ -26,11 +26,11 @@ export const authorize = (email, password) => {
       headers: {
          "Content-Type": "application/json"
       },
-      credentials: 'include',
       body: JSON.stringify({
          "email": email,
          "password": password
       }),
+      credentials: 'include',
    })
    .then(res => checkResponse(res));
 };
@@ -42,6 +42,7 @@ export const usersMe = (jwtUser) => {
          "Content-Type": "application/json",
          "Authorization" : `Bearer ${jwtUser}`
       },
+      credentials: 'include',
    })
    .then(res => checkResponse(res));
 }

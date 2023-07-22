@@ -13,6 +13,10 @@ const { ClientError } = require('./class/ClientError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 require('dotenv').config();
 
+const allowedCors = [
+  'https://v-porulitsun.nomoredomains.xyz',
+];
+
 const {
   HTTP_STATUS_NOT_FOUND,
 } = http2.constants;
@@ -25,12 +29,15 @@ const app = express();
 
 // app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(cors());
-
 app.use(express.json());
 app.use(requestLogger);
 
 mongoose.connect(`${MONGO_URL}/mestodb`, { useUnifiedTopology: true });
+
+app.use(cors({
+  origin: 'https://v-porulitsun.nomoredomains.xyz',
+  credentials: true,
+}));
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
