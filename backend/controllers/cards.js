@@ -1,12 +1,12 @@
 const http2 = require('node:http2');
 const card = require('../models/card');
-const { ClientError } = require('../class/ClientError');
+const ResourceNotFoundError = require('../class/ResourceNotFoundError');
+const BadRequestError = require("../class/BadRequestError");
+const ForbiddenError = require("../class/ForbiddenError");
 
 const {
   HTTP_STATUS_OK,
   HTTP_STATUS_CREATED,
-  HTTP_STATUS_NOT_FOUND,
-  HTTP_STATUS_FORBIDDEN,
 } = http2.constants;
 
 const getCards = (req, res, next) => {
@@ -24,7 +24,11 @@ const createCard = (req, res, next) => {
   card.create({ name, link, owner })
     .then((addCard) => res.status(HTTP_STATUS_CREATED).json(addCard))
     .catch((err) => {
-      next(err);
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные'));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -35,23 +39,27 @@ const deleteCard = (req, res, next) => {
   card.findById(cardId)
     .then((foundCard) => {
       if (!foundCard) {
-        throw new ClientError('Карточка с указанным _id не найдена', HTTP_STATUS_NOT_FOUND);
+        throw new ResourceNotFoundError('Карточка с указанным _id не найдена');
       }
 
       if (foundCard.owner.toString() !== userId) {
-        throw new ClientError('Вы не можете удалить чужую карточку', HTTP_STATUS_FORBIDDEN);
+        throw new ForbiddenError('Вы не можете удалить чужую карточку');
       }
       return card.deleteOne({ _id: cardId });
     })
     .then((deletedCard) => {
       if (!deletedCard) {
-        throw new ClientError('Карточка с указанным _id не найдена', HTTP_STATUS_NOT_FOUND);
+        throw new BadRequestError('Карточка с указанным _id не найдена');
       }
 
       return res.status(HTTP_STATUS_OK).json({ message: 'Карточка удалена' });
     })
     .catch((err) => {
-      next(err);
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Передан несуществующий _id'));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -66,11 +74,15 @@ const likeCard = (req, res, next) => {
       if (getLikeCard) {
         res.status(HTTP_STATUS_OK).json(getLikeCard);
       } else {
-        throw new ClientError('Карточка с указанным _id не найдена', HTTP_STATUS_NOT_FOUND);
+        throw new ResourceNotFoundError('Карточка с указанным _id не найдена');
       }
     })
     .catch((err) => {
-      next(err);
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Передан несуществующий _id'));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -85,11 +97,15 @@ const dislikeCard = (req, res, next) => {
       if (getDislikeCard) {
         res.status(HTTP_STATUS_OK).json(getDislikeCard);
       } else {
-        throw new ClientError('Карточка с указанным _id не найдена', HTTP_STATUS_NOT_FOUND);
+        throw new ResourceNotFoundError('Карточка с указанным _id не найдена');
       }
     })
     .catch((err) => {
-      next(err);
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Передан несуществующий _id'));
+      } else {
+        next(err);
+      }
     });
 };
 

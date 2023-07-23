@@ -2,13 +2,14 @@ const http2 = require('node:http2');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const user = require('../models/user');
-const { ClientError } = require('../class/ClientError');
+const ResourceNotFoundError = require('../class/ResourceNotFoundError');
+const ConflictError = require("../class/ResourceNotFoundError");
+const BadRequestError = require("../class/BadRequestError");
+const UnauthorizedError = require("../class/UnauthorizedError");
 
 const {
   HTTP_STATUS_OK,
   HTTP_STATUS_CREATED,
-  HTTP_STATUS_NOT_FOUND,
-  HTTP_STATUS_UNAUTHORIZED,
 } = http2.constants;
 
 // Получить всех пользователей
@@ -26,12 +27,16 @@ const getUserById = (req, res, next) => {
   user.findById(userId)
     .then((getUserId) => {
       if (!getUserId) {
-        throw new ClientError('Пользователь по указанному _id не найден', HTTP_STATUS_NOT_FOUND);
+        throw new ResourceNotFoundError('Пользователь по указанному _id не найден');
       }
       return res.status(HTTP_STATUS_OK).json(getUserId);
     })
     .catch((err) => {
-      next(err);
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Передан несуществующий _id'));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -60,7 +65,13 @@ const createUser = (req, res, next) => {
       res.status(HTTP_STATUS_CREATED).json(userWithoutPassword);
     })
     .catch((err) => {
-      next(err);
+      if (err.code === 11000) {
+        next(new ConflictError('Пользователь с таким email уже существует'));
+      } else if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные'));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -79,11 +90,15 @@ const updateProfile = (req, res, next) => {
       if (updateUser) {
         res.status(HTTP_STATUS_OK).json(updateUser);
       } else {
-        throw new ClientError('Пользователь по указанному _id не найден', HTTP_STATUS_NOT_FOUND);
+        throw new ResourceNotFoundError('Пользователь по указанному _id не найден');
       }
     })
     .catch((err) => {
-      next(err);
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные'));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -101,11 +116,15 @@ const updateAvatar = (req, res, next) => {
       if (updateAvatarUser) {
         res.status(HTTP_STATUS_OK).json(updateAvatarUser);
       } else {
-        throw new ClientError('Пользователь по указанному _id не найден', HTTP_STATUS_NOT_FOUND);
+        throw new ResourceNotFoundError('Пользователь по указанному _id не найден');
       }
     })
     .catch((err) => {
-      next(err);
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные'));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -115,7 +134,7 @@ const getUserInfo = (req, res, next) => {
   user.findById(userId)
     .then((getUserId) => {
       if (!getUserId) {
-        throw new ClientError('Пользователь по указанному _id не найден', HTTP_STATUS_NOT_FOUND);
+        throw new ResourceNotFoundError('Пользователь по указанному _id не найден');
       }
       return res.status(HTTP_STATUS_OK).json(getUserId);
     })
@@ -130,21 +149,20 @@ const login = (req, res, next) => {
   user.findOne({ email }).select('+password')
     .then((users) => {
       if (!users) {
-        throw new ClientError('Неправильная почта или пароль', HTTP_STATUS_UNAUTHORIZED);
+        throw new UnauthorizedError('Неправильная почта или пароль');
       }
 
       return bcrypt.compare(password, users.password)
         .then((matched) => {
           if (!matched) {
-            throw new ClientError('Неправильная почта или пароль', HTTP_STATUS_UNAUTHORIZED);
+            throw new UnauthorizedError('Неправильная почта или пароль');
           }
 
           const tokenPayload = { _id: users._id };
           const token = jwt.sign(tokenPayload, 'super-strong-secret', { expiresIn: '7d' });
           res.cookie('token', token, {
-            maxAge: 64000000,
+            maxAge: 7 * 24 * 60 * 60 * 1000,
             httpOnly: true,
-            secure: true,
             sameSite: 'None',
           });
 
@@ -152,7 +170,11 @@ const login = (req, res, next) => {
         });
     })
     .catch((err) => {
-      next(err);
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные'));
+      } else {
+        next(err);
+      }
     });
 };
 
