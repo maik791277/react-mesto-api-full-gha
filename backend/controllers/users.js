@@ -1,4 +1,5 @@
 const http2 = require('node:http2');
+const { JWT_SECRET } = process.env;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const user = require('../models/user');
@@ -159,7 +160,7 @@ const login = (req, res, next) => {
           }
 
           const tokenPayload = { _id: users._id };
-          const token = jwt.sign(tokenPayload, 'super-strong-secret', { expiresIn: '7d' });
+          const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '7d' });
           res.cookie('token', token, {
             maxAge: 7 * 24 * 60 * 60 * 1000,
             httpOnly: true,
