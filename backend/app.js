@@ -1,4 +1,3 @@
-const http2 = require('node:http2');
 const mongoose = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
 const { errors } = require('celebrate');
@@ -9,17 +8,13 @@ const path = require('path');
 const { createUser, login } = require('./controllers/users');
 const { errorMiddleware } = require('./middlewares/error');
 const routes = require('./routes');
-const { ClientError } = require('./class/ClientError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const ResourceNotFoundError = require("./class/ResourceNotFoundError");
 require('dotenv').config();
 
 const allowedCors = [
   'https://v-porulitsun.nomoredomains.xyz',
 ];
-
-const {
-  HTTP_STATUS_NOT_FOUND,
-} = http2.constants;
 
 const {
   PORT = 3000,
@@ -71,7 +66,7 @@ app.use(cookieParser());
 app.use('/', routes);
 app.use(errorLogger);
 app.use(errors());
-app.use((req, res, next) => next(new ClientError('Страница не найдена', HTTP_STATUS_NOT_FOUND)));
+app.use((req, res, next) => next(new ResourceNotFoundError('Страница не найдена')));
 app.use(errorMiddleware);
 
 app.listen(PORT);
