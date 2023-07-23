@@ -5,7 +5,7 @@
   
 Пожалуйста, прикрепите в это описание ссылку на сайт, размещенный на Яндекс.Облаке.
 
-Адрес репозитория: https://github.com/...
+Адрес репозитория: https://github.com/...](https://github.com/maik791277/react-mesto-api-full-gha
 
 ssh maik5@51.250.66.78
 
