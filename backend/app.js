@@ -14,10 +14,6 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const ResourceNotFoundError = require("./class/ResourceNotFoundError");
 require('dotenv').config();
 
-const allowedCors = [
-  'https://v-porulitsun.nomoredomains.xyz',
-];
-
 const {
   PORT = 3000,
   MONGO_URL = 'mongodb://127.0.0.1:27017',
