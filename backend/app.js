@@ -1,3 +1,5 @@
+require('dotenv').config();
+const http2 = require('node:http2');
 const mongoose = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
 const { errors } = require('celebrate');
@@ -29,8 +31,13 @@ app.use(requestLogger);
 
 mongoose.connect(`${MONGO_URL}/mestodb`, { useUnifiedTopology: true });
 
+const allowedOrigins = [
+  'https://v-porulitsun.nomoredomains.xyz',
+  'http://v-porulitsun.nomoredomains.xyz'
+];
+
 app.use(cors({
-  origin: 'https://v-porulitsun.nomoredomains.xyz',
+  origin: allowedOrigins,
   credentials: true,
 }));
 
@@ -57,16 +64,11 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 
-app.get('/error', (req, res, next) => {
-  const error = new Error('Произошла ошибка');
-  next(error);
-});
-
 app.use(cookieParser());
 app.use('/', routes);
+app.use((req, res, next) => next(new ResourceNotFoundError('Страница не найдена')));
 app.use(errorLogger);
 app.use(errors());
-app.use((req, res, next) => next(new ResourceNotFoundError('Страница не найдена')));
 app.use(errorMiddleware);
 
 app.listen(PORT);
