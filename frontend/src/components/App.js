@@ -57,9 +57,8 @@ function App() {
 
    function authorize(email, password) {
       mestoAuth.authorize(email, password)
-      .then((data) => { 
-            handleLogin(); 
-            navigate('/main') 
+      .then((data) => {
+            handleLogin();
             tokenCheck()
       })
       .catch((err) => {
@@ -98,35 +97,32 @@ function App() {
          setIsInfoTooltip(true)
       });
    }
-   function tokenCheck() {
-      const jwtCookie = document.cookie.split("jwt=")[1]; // Извлекаем значение JWT из cookie по имени "jwt"
-      console.log(jwtCookie); // Выведет значение JWT в консоль
 
-      if (jwtCookie) {
-         mestoAuth.usersMe(jwtCookie)
-         .then((user) => {
-            setUserData(user.data);
-            setLoggedIn(true);
-         })
-         .catch((err) => alert(err));
-      }
+  function getCardsMain() {
+      api.getInitialCards()
+      .then((data) => {
+         setCurrentCard(data);
+      })
+      .catch((err) => alert(err)) 
+  }
+
+  function tokenCheck() {
+      mestoAuth.usersMe()
+      .then((user) => {
+         setLoggedIn(true);
+         getCardsMain()
+         setCurrentUser(user)
+         navigate('/main')
+      })
+      .catch((err) => alert(err));
    }
-   tokenCheck()
 
    useEffect(() => {
       tokenCheck()
    }, [])
 
-   useEffect(() => {
-      api.getInitialCards()
-      .then((data) => {
-         setCurrentCard(data);
-      })
-      .catch((err) => alert(err));
-   }, []);
-
    function handleCardLike(card) {
-      const isLiked = card.likes.some((i) => i._id === currentUser._id);
+      const isLiked = card.likes.some((i) => i === currentUser._id);
 
       api.putCardLike(card._id, !isLiked)
       .then((newCard) => {
@@ -212,7 +208,7 @@ function App() {
    <CurrentUserContext.Provider value={currentUser}>
       <div className="body">
          <div className="page">
-            <Header userData={userData} asdasd={setLoggedIn}/>
+            <Header userData={currentUser} asdasd={setLoggedIn}/>
             <Routes>
                <Route path="/main" element={<ProtectedRoute
                element={Main}

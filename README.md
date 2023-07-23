@@ -9,8 +9,8 @@
 
 ## Ссылки на проект
 
-IP-адрес x.x.x.x
+IP-адрес 51.250.66.78
 
-Frontend https://...
+Frontend https://v-porulitsun.nomoredomains.xyz
 
-Backend https://...
+Backend https://api-v-porulitsun.nomoredo.nomoredomains.xyz

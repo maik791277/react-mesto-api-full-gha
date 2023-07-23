@@ -13,7 +13,7 @@ function Card(props) {
    }
 
    const isOwn = props.idUserCard === props.idUser;
-   const isLiked = props.likes.some(i => i._id === props.idUser);
+   const isLiked = props.likes.some(i => i === props.idUser);
 
    const cardLikeButtonClassName = (
    `card__like ${isLiked && 'card__like_active'}`

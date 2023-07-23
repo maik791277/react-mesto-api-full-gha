@@ -36,7 +36,7 @@ function Main(props) {
                   link={item.link}
                   name={item.name}
                   likes={item.likes}
-                  idUserCard={item.owner._id}
+                  idUserCard={item.owner}
                   idUser={currentUser._id}
                   onCardClick={props.handleClick}
                   card={item}
