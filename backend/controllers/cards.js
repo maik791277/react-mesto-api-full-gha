@@ -1,8 +1,8 @@
 const http2 = require('node:http2');
 const card = require('../models/card');
 const ResourceNotFoundError = require('../class/ResourceNotFoundError');
-const BadRequestError = require("../class/BadRequestError");
-const ForbiddenError = require("../class/ForbiddenError");
+const BadRequestError = require('../class/BadRequestError');
+const ForbiddenError = require('../class/ForbiddenError');
 
 const {
   HTTP_STATUS_OK,

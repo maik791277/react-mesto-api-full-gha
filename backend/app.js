@@ -1,17 +1,15 @@
 require('dotenv').config();
-const http2 = require('node:http2');
 const mongoose = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
 const { errors } = require('celebrate');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-const path = require('path');
 const { createUser, login } = require('./controllers/users');
 const { errorMiddleware } = require('./middlewares/error');
 const routes = require('./routes');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const ResourceNotFoundError = require("./class/ResourceNotFoundError");
+const ResourceNotFoundError = require('./class/ResourceNotFoundError');
 require('dotenv').config();
 
 const {
@@ -29,7 +27,7 @@ mongoose.connect(`${MONGO_URL}/mestodb`, { useUnifiedTopology: true });
 
 const allowedOrigins = [
   'https://v-porulitsun.nomoredomains.xyz',
-  'http://v-porulitsun.nomoredomains.xyz'
+  'http://v-porulitsun.nomoredomains.xyz',
 ];
 
 app.use(cors({

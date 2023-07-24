@@ -12,7 +12,7 @@ const errorMiddleware = (err, req, res, next) => {
     logger.error(`Error occurred: ${err}`);
   }
   const message = statusCode === HTTP_STATUS_INTERNAL_SERVER_ERROR ? 'На сервере произошла ошибка' : err.message;
-  res.status(statusCode).send({ message })
+  res.status(statusCode).send({ message });
   next();
 };
 module.exports = {
