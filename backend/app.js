@@ -58,6 +58,10 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 
+app.get('/signout', (req, res) => {
+  res.clearCookie('token').send({ message: 'Выход' });
+});
+
 app.use(cookieParser());
 app.use('/', routes);
 app.use((req, res, next) => next(new ResourceNotFoundError('Страница не найдена')));
