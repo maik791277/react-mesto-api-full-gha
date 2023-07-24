@@ -38,8 +38,7 @@ function Header (props) {
    })
 
    function deleteJwt() {
-      localStorage.removeItem('jwt')
-      navigate('/sign-in')
+      props.exitUser()
       props.asdasd(false)
    }
 

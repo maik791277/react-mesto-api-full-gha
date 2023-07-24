@@ -17,6 +17,7 @@ import AddPlacePopup from "./AddPlacePopup";
 import DeletePlacePopup from "./DeletePlacePopup";
 import ImagePopup from "./ImagePopup";
 import InfoTooltip from "./InfoTooltip";
+import {logoutUser} from "../utils/mestoAuth";
 
 
 function App() {
@@ -169,6 +170,14 @@ function App() {
       .catch((err) => alert(err));
    }
 
+   function logoutUser () {
+      mestoAuth.logout()
+      .then(() => {
+         navigate('/sign-in')
+      })
+      .catch((err) => alert(err));
+   }
+
    function handleEditAvatarClick() {
       setIsEditAvatarPopupOpen(true);
    }
@@ -208,7 +217,7 @@ function App() {
    <CurrentUserContext.Provider value={currentUser}>
       <div className="body">
          <div className="page">
-            <Header userData={currentUser} asdasd={setLoggedIn}/>
+            <Header userData={currentUser} asdasd={setLoggedIn} exitUser={logoutUser}/>
             <Routes>
                <Route path="/main" element={<ProtectedRoute
                element={Main}

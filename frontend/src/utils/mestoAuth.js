@@ -46,3 +46,14 @@ export const usersMe = (jwtUser) => {
    })
    .then(res => checkResponse(res));
 }
+
+export const logout = () => {
+   return fetch(`${BASE_URL}/signout`, {
+      method: 'GET',
+      headers: {
+         "Content-Type": "application/json",
+      },
+      credentials: 'include',
+   })
+   .then(res => checkResponse(res));
+}
