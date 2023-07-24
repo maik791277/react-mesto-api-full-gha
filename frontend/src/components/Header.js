@@ -37,11 +37,6 @@ function Header (props) {
       locationPage()
    })
 
-   function deleteJwt() {
-      props.exitUser()
-      props.asdasd(false)
-   }
-
    function toggleMenu() {
       const hamburger = document.querySelector('.hamburger')
       const barTop = document.querySelector('.top')
@@ -70,7 +65,7 @@ function Header (props) {
       {hamburger &&
       <div className="hamburger">
          <p className="header__user-email">{props.userData.email}</p>
-         <button onClick={deleteJwt} className="header__button">Выход</button>
+         <button onClick={props.exitUser} className="header__button">Выход</button>
       </div>
       }
       <header className="header">
@@ -83,7 +78,7 @@ function Header (props) {
          <div className="header__user">
             {hamburger &&
             <>
-               <button onClick={deleteJwt} className="header__button">Выход</button>
+               <button onClick={props.exitUser} className="header__button">Выход</button>
                <p className="header__user-email">{props.userData.email}</p>
             </>
             }

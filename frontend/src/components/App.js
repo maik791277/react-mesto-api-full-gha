@@ -174,6 +174,7 @@ function App() {
       mestoAuth.logout()
       .then(() => {
          navigate('/sign-in')
+         setLoggedIn(false)
       })
       .catch((err) => alert(err));
    }
