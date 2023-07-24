@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const user = require('../models/user');
 const ResourceNotFoundError = require('../class/ResourceNotFoundError');
-const ConflictError = require('../class/ResourceNotFoundError');
+const ConflictError = require('../class/ConflictError');
 const BadRequestError = require('../class/BadRequestError');
 const UnauthorizedError = require('../class/UnauthorizedError');
 

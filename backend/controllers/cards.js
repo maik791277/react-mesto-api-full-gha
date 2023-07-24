@@ -47,16 +47,10 @@ const deleteCard = (req, res, next) => {
       }
       return card.deleteOne({ _id: cardId });
     })
-    .then((deletedCard) => {
-      if (!deletedCard) {
-        throw new BadRequestError('Карточка с указанным _id не найдена');
-      }
-
-      return res.status(HTTP_STATUS_OK).json({ message: 'Карточка удалена' });
-    })
+    .then(() => res.status(HTTP_STATUS_OK).json({ message: 'Карточка удалена' }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Передан несуществующий _id'));
+        next(new ResourceNotFoundError('Передан несуществующий _id'));
       } else {
         next(err);
       }
